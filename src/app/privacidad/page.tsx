@@ -58,7 +58,7 @@ const DERECHOS_ARCO = [
 
 export default function PrivacidadPage() {
   return (
-    <section className="py-section">
+    <section className="py-section privacy-page">
       <div className="container">
         <div className="breadcrumb-custom mb-4 small">
           <Link href="/" className="text-muted text-decoration-none">

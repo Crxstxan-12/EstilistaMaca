@@ -55,10 +55,10 @@ export default function CookieConsent() {
                 </svg>
               </div>
               <div className="flex-grow-1">
-                <p className="mb-0 fw-semibold small" style={{ color: '#D4AF37' }}>
+                <p className="mb-0 fw-bold small" style={{ color: '#D4AF37', letterSpacing: '0.01em' }}>
                   Uso de cookies y datos personales
                 </p>
-                <p className="mb-0 small text-white-50 mt-1 lh-sm">
+                <p className="mb-0 small mt-1 lh-sm fw-bold" style={{ color: '#F5F5F0' }}>
                   Utilizamos cookies estrictamente necesarias para que la web funcione (sesión, login).
                   Además guardamos tu nombre, e-mail, teléfono, fecha de nacimiento y datos de reserva para
                   gestionar tus citas. Al aceptar, confirmas que has leído nuestra{' '}
@@ -73,7 +73,7 @@ export default function CookieConsent() {
             <div className="d-grid gap-2 d-flex flex-row justify-content-lg-end">
               <Link
                 href="/privacidad"
-                className="btn btn-sm btn-outline-light rounded-pill px-4 flex-grow-1 flex-lg-grow-0"
+                className="btn btn-sm btn-outline-light rounded-pill px-4 flex-grow-1 flex-lg-grow-0 fw-bold"
                 style={{ borderColor: 'rgba(245,245,240,0.35)', color: '#F5F5F0' }}
               >
                 Más info

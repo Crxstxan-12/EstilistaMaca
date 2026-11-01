@@ -1503,6 +1503,37 @@ a.list-group-item.list-group-custom:hover {
 .accordion-button:not(.collapsed)::after { filter: sepia(1) hue-rotate(3deg) saturate(8); }
 .danger-soft, .bg-danger-soft { background: rgba(220,53,69,0.10); }
 
+/* ===== Privacy readability ===== */
+.privacy-page .lead,
+.privacy-page p,
+.privacy-page li,
+.privacy-page td,
+.privacy-page th,
+.privacy-page .accordion-body,
+.privacy-page .accordion-button,
+.privacy-page .table-custom tbody td,
+.privacy-page .table-custom thead th,
+.privacy-page .text-muted,
+.privacy-page .small {
+    color: var(--color-bg-deep) !important;
+    font-weight: 700 !important;
+}
+.privacy-page .badge,
+.privacy-page .state-badge,
+.privacy-page code,
+.privacy-page strong {
+    font-weight: 700 !important;
+}
+.privacy-page .accordion-body .text-muted,
+.privacy-page .table-custom .text-muted {
+    color: rgba(13,13,13,0.82) !important;
+}
+.cookie-consent-banner p,
+.cookie-consent-banner a,
+.cookie-consent-banner .btn {
+    font-weight: 700 !important;
+}
+
 /* ===== Login blocked (rate limit) ===== */
 .auth-section {
     background: linear-gradient(180deg, var(--color-bg-alt) 0%, var(--color-bg-deep) 100%);
@@ -1511,4 +1542,3 @@ a.list-group-item.list-group-custom:hover {
     .cookie-consent-banner .container .row { gap: 0.5rem; }
     .cookie-consent-banner .btn { padding: 0.45rem 0.9rem; font-size: 0.85rem; }
 }
-
