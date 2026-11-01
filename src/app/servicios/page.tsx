@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import IconoCategoria from '@/components/IconoCategoria';
+import { BRAND } from '@/lib/config';
 import { TIPOS_DESCUENTO, precioServicio } from '@/lib/format';
 import { prisma } from '@/lib/prisma';
 
@@ -45,6 +46,25 @@ export default async function ServiciosPage() {
               Todos los <span className="text-gradient-gold">servicios</span>
             </h1>
             <p className="text-subtle">Selecciona el servicio y reserva tu hora con un clic.</p>
+            <div className="card-custom mt-4 text-start mx-auto" style={{ maxWidth: 860 }}>
+              <p className="mb-2 fw-semibold">
+                Importante sobre los valores publicados:
+              </p>
+              <p className="mb-0 text-subtle small">
+                Los servicios marcados como <strong>&quot;desde&quot;</strong> pueden variar según
+                largo, cantidad de cabello, historial químico y evaluación previa. Si necesitas una
+                orientación rápida, también puedes escribirnos a WhatsApp al{' '}
+                <a
+                  href={`https://wa.me/${BRAND.whatsapp}`}
+                  className="text-gold text-decoration-none fw-semibold"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {BRAND.telefonoVisible}
+                </a>
+                .
+              </p>
+            </div>
           </div>
         </div>
       </section>

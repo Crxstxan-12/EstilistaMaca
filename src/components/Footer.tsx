@@ -24,7 +24,7 @@ export default function Footer({ autenticado, esAdmin }: { autenticado: boolean;
               <div className="logo-circle"><Logo /></div>
               <div className="brand-text">
                 <span className="brand-name">{BRAND.nombre}</span>
-                <span className="brand-sub">Estilista Profesional</span>
+                <span className="brand-sub">{BRAND.subtitulo}</span>
               </div>
             </Link>
             <p className="footer-brand-desc">
@@ -76,7 +76,7 @@ export default function Footer({ autenticado, esAdmin }: { autenticado: boolean;
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                 <circle cx="12" cy="10" r="3" />
               </svg>
-              <span>Dirección a confirmar<br />Región Metropolitana</span>
+              <span>{BRAND.direccion}<br />{BRAND.ciudad}</span>
             </div>
             <div className="footer-contact-item">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -115,7 +115,7 @@ export default function Footer({ autenticado, esAdmin }: { autenticado: boolean;
 
         <div className="footer-bottom">
           <p className="footer-copy mb-0">
-            © {anio} {BRAND.nombre} · Estilista Profesional. Todos los derechos reservados.
+            © {anio} {BRAND.nombre} · {BRAND.subtitulo}. Todos los derechos reservados.
           </p>
           <p className="footer-copy mb-0" style={{ fontSize: '0.8rem' }}>
             Hecho con <span style={{ color: '#C9A227' }}>♥</span> en Chile

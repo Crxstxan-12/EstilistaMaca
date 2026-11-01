@@ -111,9 +111,8 @@ export default async function HomePage() {
                 El arte de verte <span className="text-gradient-gold">espectacular</span>.
               </h1>
               <p className="hero-sub mb-4">
-                Estética boutique de la mano de <strong>{BRAND.nombre}</strong>. Coloración, alisados,
-                cortes y técnicas exclusivas en un ambiente cálido, privado y premium. Reserva tu hora en
-                segundos.
+                Bienvenida a <strong>{BRAND.nombre}</strong> en <strong>{BRAND.subtitulo}</strong>.
+                Descubre servicios, precios, promociones y reserva tu hora sin depender de WhatsApp.
               </p>
               <div className="hero-cta d-flex flex-wrap gap-3 mb-5">
                 <Link href="/reservas" className="btn btn-primary btn-lg">
@@ -127,6 +126,35 @@ export default async function HomePage() {
                 </Link>
                 <a href="#servicios" className="btn btn-outline-light btn-lg">
                   Ver servicios
+                </a>
+                <Link href="/servicios" className="btn btn-outline-light btn-lg">
+                  Promociones
+                </Link>
+                <a
+                  href={BRAND.mapsUrl}
+                  className="btn btn-outline-light btn-lg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Cómo llegar
+                </a>
+              </div>
+              <div className="d-flex flex-wrap gap-2 mb-4">
+                <a
+                  href={`https://wa.me/${BRAND.whatsapp}`}
+                  className="mini-pill text-decoration-none"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp directo
+                </a>
+                <a
+                  href={BRAND.instagramUrl}
+                  className="mini-pill text-decoration-none"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Instagram
                 </a>
               </div>
               <div className="hero-stats row">
@@ -349,6 +377,14 @@ export default async function HomePage() {
               <Link href="/contacto" className="btn btn-primary">
                 Ir a contacto
               </Link>
+              <a
+                href={BRAND.mapsUrl}
+                className="btn btn-outline-light ms-2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Cómo llegar
+              </a>
             </div>
             <div className="col-12 col-lg-5">
               <div className="card-custom hours-card">
@@ -448,6 +484,31 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-section bg-soft-dark">
+        <div className="container-custom">
+          <div className="section-head text-center mb-5">
+            <p className="section-eyebrow mb-2">ℹ️ IMPORTANTE</p>
+            <h2 className="section-title font-serif mb-3">
+              Recomendaciones para tu <span className="text-gradient-gold">próxima visita</span>
+            </h2>
+          </div>
+          <div className="row g-3">
+            {[
+              'Llega a la hora reservada para respetar la agenda del salón.',
+              'Evita gel, mousse, aceite y sérum antes de servicios de cabello.',
+              'En procesos largos, consulta previamente la duración estimada.',
+              'En color y decoloración, el valor final puede variar según evaluación.',
+            ].map((item) => (
+              <div className="col-12 col-md-6" key={item}>
+                <div className="card-custom h-100">
+                  <p className="mb-0">{item}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

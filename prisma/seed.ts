@@ -40,90 +40,102 @@ type CategoriaSeed = {
 
 const CATEGORIAS: CategoriaSeed[] = [
   {
-    nombre: 'Alisados & Tratamientos Capilares',
+    nombre: 'Cabello',
     icono: 'secador',
     orden: 1,
     descripcion:
-      'Alisados profesionales, keratina, botox capilar, reconstrucciones y tratamientos de hidratación intensiva.',
+      'Cortes, coloración, visos, balayage, tratamientos y procesos químicos con evaluación previa.',
     servicios: [
-      { nombre: 'Alisado Orgánico Premium', duracion: 180, precio: 65000, precioDesde: true, descripcionCorta: 'Alisado sin formol, ideal cabellos teñidos o sensibles.', destacado: true },
-      { nombre: 'Alisado con Keratina', duracion: 240, precio: 75000, descripcionCorta: 'Alisado duradero con keratina hidrolizada.' },
-      { nombre: 'Botox Capilar', duracion: 150, precio: 55000, descripcionCorta: 'Tratamiento reestructurante con efecto anti-frizz.' },
-      { nombre: 'Reconstrucción Capilar Intensiva', duracion: 90, precio: 38000, descripcionCorta: 'Para cabellos dañados y muy secos.' },
+      {
+        nombre: 'Corte de cabello',
+        duracion: 45,
+        precio: 8000,
+        descripcionCorta: 'Corte y terminaciones. El tiempo puede variar entre 30 y 60 minutos.',
+        destacado: true,
+      },
+      {
+        nombre: 'Coloración',
+        duracion: 60,
+        precio: 35000,
+        precioDesde: true,
+        descripcionCorta: 'Servicio base de color. El valor final se confirma en evaluación.',
+      },
+      {
+        nombre: 'Balayage',
+        duracion: 300,
+        precio: 80000,
+        precioDesde: true,
+        descripcionCorta: 'Técnica de iluminación degradada. Puede tardar entre 4 y 6 horas.',
+        destacado: true,
+      },
+      {
+        nombre: 'Visos / mechas',
+        duracion: 300,
+        precio: 60000,
+        precioDesde: true,
+        descripcionCorta: 'Visos o mechas con diagnóstico previo según base y largo.',
+      },
+      {
+        nombre: 'Btx',
+        duracion: 180,
+        precio: 35000,
+        precioDesde: true,
+        descripcionCorta: 'Tratamiento capilar restaurador. Duración referencial de 3 horas.',
+      },
+      {
+        nombre: 'Baño de color',
+        duracion: 60,
+        precio: 30000,
+        descripcionCorta: 'Realza el tono, matiza y aporta brillo al cabello.',
+      },
+      {
+        nombre: 'Alisado permanente',
+        duracion: 120,
+        precio: 50000,
+        precioDesde: true,
+        descripcionCorta: 'Alisado sujeto a largo, cantidad y evaluación del cabello.',
+      },
+      {
+        nombre: 'Ondulación / permanente',
+        duracion: 120,
+        precio: 35000,
+        precioDesde: true,
+        descripcionCorta: 'Ondulación o permanente con evaluación previa del estado capilar.',
+      },
     ],
   },
   {
-    nombre: 'Coloración & Técnicas',
-    icono: 'tijeras',
-    orden: 2,
-    descripcion:
-      'Coloración completa, mechas, balayage, baby lights, reflejos y correcciones de color.',
-    servicios: [
-      { nombre: 'Balayage Premium', duracion: 240, precio: 80000, precioDesde: true, descripcionCorta: 'Técnica francesa de color degradado natural.', destacado: true },
-      { nombre: 'Mechas Californianas / Babylights', duracion: 210, precio: 70000, descripcionCorta: 'Mechas finas o degradado en puntas.', destacado: true },
-      { nombre: 'Coloración Completa', duracion: 120, precio: 45000, descripcionCorta: 'Color total de la raíz a las puntas.' },
-      { nombre: 'Retoque de Raíz', duracion: 60, precio: 28000, descripcionCorta: 'Retoque solo área de crecimiento.' },
-      { nombre: 'Corrección de Color', duracion: 180, precio: 72000, precioDesde: true, descripcionCorta: 'Trabajo especializado sobre coloración previa.' },
-    ],
-  },
-  {
-    nombre: 'Cortes & Peinados',
-    icono: 'tijeras',
-    orden: 3,
-    descripcion: 'Cortes de mujer, flequillos, bob, long bob, capas y peinados de fiesta.',
-    servicios: [
-      { nombre: 'Corte Mujer + Lavado + Peinado', duracion: 75, precio: 35000, descripcionCorta: 'Corte a tijera clásico o moderno según rostro.', destacado: true },
-      { nombre: 'Bob / Long Bob (Lob)', duracion: 90, precio: 42000, descripcionCorta: 'Corte estructurado a la altura de mandíbula/hombros.' },
-      { nombre: 'Flequillo + corte', duracion: 90, precio: 38000, descripcionCorta: 'Flequillo curtain, recto, abierto o side bangs.' },
-      { nombre: 'Peinado de Fiesta', duracion: 120, precio: 48000, descripcionCorta: 'Recogidos, ondas o peinado glamour para eventos.' },
-    ],
-  },
-  {
-    nombre: 'Rizos Permanentes & Estructuras',
-    icono: 'rizos',
-    orden: 4,
-    descripcion: 'Permanentes de rizos, activaciones y definición de ondas naturales.',
-    servicios: [
-      { nombre: 'Permanente de Rizos Soft', duracion: 180, precio: 68000, precioDesde: true, descripcionCorta: 'Rizos naturales y suaves, tratamiento incluido.' },
-      { nombre: 'Permanente Volumen Ondulado', duracion: 150, precio: 58000, descripcionCorta: 'Ondas de playa naturales.' },
-      { nombre: 'Definición de Rizos Naturales (Deva Cut)', duracion: 90, precio: 42000, descripcionCorta: 'Corte en seco adaptado a cada tipo de rizo.' },
-    ],
-  },
-  {
-    nombre: 'Barbería & Caballero',
-    icono: 'navaja',
-    orden: 5,
-    descripcion: 'Cortes clásicos y modernos, degradados, perfilados de barba y afeitado.',
-    servicios: [
-      { nombre: 'Corte Caballero + lavado', duracion: 45, precio: 22000, descripcionCorta: 'Tijera y máquina, incluye lavado.', destacado: true },
-      { nombre: 'Degradado / Fade', duracion: 60, precio: 26000, descripcionCorta: 'Baja, media o alta con acabado pulido.' },
-      { nombre: 'Perfilado de Barba + Afeitado Tradicional', duracion: 45, precio: 22000, descripcionCorta: 'Navaja, toalla caliente y aceites.' },
-      { nombre: 'Pack Corte + Barba', duracion: 75, precio: 38000, descripcionCorta: 'Corte degradado + perfilado completo.' },
-    ],
-  },
-  {
-    nombre: 'Manicure & Pedicure',
+    nombre: 'Uñas',
     icono: 'unas',
-    orden: 6,
-    descripcion: 'Manicura clásica, esmaltado semipermanente, gelificada y pedicura spa.',
+    orden: 2,
+    descripcion: 'Servicios de manicure y soft gel con enfoque estético y duración informada.',
     servicios: [
-      { nombre: 'Manicura Clásica', duracion: 45, precio: 22000, descripcionCorta: 'Limpiado, limado, cutícula y esmalte tradicional.', destacado: true },
-      { nombre: 'Esmaltado Semipermanente', duracion: 60, precio: 32000, descripcionCorta: 'Hasta 3 semanas de duración con acabado glossy.', destacado: true },
-      { nombre: 'Uñas Gelificadas (sistema completo)', duracion: 120, precio: 48000, descripcionCorta: 'Extensión o construcción sobre uña natural.' },
-      { nombre: 'Pedicura Spa Completa', duracion: 75, precio: 36000, descripcionCorta: 'Exfoliación, hidratación y esmaltado.' },
+      {
+        nombre: 'Manicure',
+        duracion: 120,
+        precio: 25000,
+        descripcionCorta: 'Servicio de manicure con duración aproximada de 2 horas.',
+        destacado: true,
+      },
+      {
+        nombre: 'Soft gel',
+        duracion: 150,
+        precio: 25000,
+        descripcionCorta: 'Aplicación de soft gel con duración aproximada de 2 horas y 30 minutos.',
+      },
     ],
   },
 ];
 
 /** 0 = Lunes … 6 = Domingo */
 const HORARIO_SEMANAL: { dia: number; abierto: boolean; apertura: string | null; cierre: string | null; nota: string }[] = [
-  { dia: 0, abierto: true, apertura: '10:00', cierre: '20:00', nota: '' },
-  { dia: 1, abierto: true, apertura: '10:00', cierre: '20:00', nota: '' },
-  { dia: 2, abierto: true, apertura: '10:00', cierre: '20:00', nota: '' },
-  { dia: 3, abierto: true, apertura: '10:00', cierre: '20:00', nota: '' },
-  { dia: 4, abierto: true, apertura: '10:00', cierre: '21:00', nota: '' },
-  { dia: 5, abierto: true, apertura: '10:00', cierre: '18:00', nota: '' },
-  { dia: 6, abierto: false, apertura: null, cierre: null, nota: 'Domingo cerrado' },
+  { dia: 0, abierto: true, apertura: '09:00', cierre: '18:00', nota: '' },
+  { dia: 1, abierto: true, apertura: '09:00', cierre: '18:00', nota: '' },
+  { dia: 2, abierto: true, apertura: '09:00', cierre: '18:00', nota: '' },
+  { dia: 3, abierto: true, apertura: '09:00', cierre: '18:00', nota: '' },
+  { dia: 4, abierto: true, apertura: '09:00', cierre: '18:00', nota: '' },
+  { dia: 5, abierto: false, apertura: null, cierre: null, nota: 'Solo con cita' },
+  { dia: 6, abierto: false, apertura: null, cierre: null, nota: 'Cerrado' },
 ];
 
 type PromocionSeed = {
@@ -138,32 +150,24 @@ type PromocionSeed = {
 
 const PROMOCIONES: PromocionSeed[] = [
   {
-    nombre: 'Bienvenida: 15% OFF en tu primera visita',
-    codigo: 'BIENVENIDA15',
-    tipoDescuento: 'PORCENTAJE',
-    valorDescuento: 15,
-    diasVigencia: 30,
-    stockUsos: 100,
-    descripcion:
-      'Incentivo para nuevas clientas: 15% de descuento en cualquier servicio en su primera reserva en Macarena Estilista.',
-  },
-  {
-    nombre: 'Pack Novias: Color + Corte + Peinado',
-    codigo: 'PACKNOVIAS',
+    nombre: 'Promoción hombres · Permanente / rizos',
+    codigo: 'RIZOSHOMBRE',
     tipoDescuento: 'MONTO',
-    valorDescuento: 30000,
-    diasVigencia: 90,
-    stockUsos: 20,
-    descripcion: 'Descuento especial de $30.000 para servicios integrales de novia.',
+    valorDescuento: 40000,
+    diasVigencia: 30,
+    stockUsos: null,
+    descripcion:
+      'Promoción orientada a permanente o rizos para hombres. Confirmar vigencia al reservar.',
   },
   {
-    nombre: 'Martes de Color: 2x1 Retoque de Raíz',
-    codigo: '2X1MARTES',
-    tipoDescuento: 'DOS_POR_UNO',
-    valorDescuento: 0,
-    diasVigencia: 60,
+    nombre: 'Promoción mujeres · Color Glow',
+    codigo: 'COLORGLOW',
+    tipoDescuento: 'MONTO',
+    valorDescuento: 65000,
+    diasVigencia: 30,
     stockUsos: null,
-    descripcion: 'Los martes, paga 1 y llevas 2 retoques de raíz (amigas/madre-hija).',
+    descripcion:
+      'Promoción Color Glow. Confirmar qué incluye exactamente y su vigencia antes de confirmar la cita.',
   },
 ];
 
@@ -247,8 +251,6 @@ async function main() {
 
   console.log('🔶 Cargando promociones...');
   const ahora = new Date();
-  const idServicioRetoque = serviciosPorSlug.get('coloracion-tecnicas-retoque-de-raiz');
-
   for (const promo of PROMOCIONES) {
     const slug = slugify(promo.nombre);
     const validoHasta = new Date(ahora.getTime() + promo.diasVigencia * 24 * 60 * 60 * 1000);
@@ -278,12 +280,29 @@ async function main() {
       },
     });
 
-    // La promo 2x1 aplica al retoque de raíz.
-    if (promo.codigo === '2X1MARTES' && idServicioRetoque) {
-      await prisma.promocion.update({
-        where: { id: promocion.id },
-        data: { serviciosAplicables: { set: [{ id: idServicioRetoque }] } },
-      });
+    if (promo.codigo === 'COLORGLOW') {
+      const coloracion = serviciosPorSlug.get('cabello-coloracion');
+      const banoColor = serviciosPorSlug.get('cabello-bano-de-color');
+      if (coloracion || banoColor) {
+        await prisma.promocion.update({
+          where: { id: promocion.id },
+          data: {
+            serviciosAplicables: {
+              set: [coloracion, banoColor].filter(Boolean).map((id) => ({ id: id! })),
+            },
+          },
+        });
+      }
+    }
+
+    if (promo.codigo === 'RIZOSHOMBRE') {
+      const permanente = serviciosPorSlug.get('cabello-ondulacion-permanente');
+      if (permanente) {
+        await prisma.promocion.update({
+          where: { id: promocion.id },
+          data: { serviciosAplicables: { set: [{ id: permanente }] } },
+        });
+      }
     }
   }
   console.log(`   Promociones: ${PROMOCIONES.length}`);
@@ -300,7 +319,7 @@ async function main() {
       firstName: 'Macarena',
       lastName: 'Escobar',
       rol: 'ADMINISTRADOR',
-      telefono: '+56900000000',
+      telefono: '+56978033409',
       isStaff: true,
       isSuperuser: true,
     },

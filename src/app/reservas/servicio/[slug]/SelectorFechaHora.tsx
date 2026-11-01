@@ -124,6 +124,10 @@ export default function SelectorFechaHora({
               <span className="fw-semibold">En salón</span>
             </li>
           </ul>
+          <div className="alert alert-warning bg-soft-warning border-color-subtle mb-0 small">
+            Si el servicio aparece con valor <strong>desde</strong>, el monto final puede variar
+            según largo, cantidad de cabello, trabajos químicos previos y evaluación profesional.
+          </div>
         </div>
 
         <div className="card-custom">
@@ -160,6 +164,19 @@ export default function SelectorFechaHora({
             </p>
           )}
           {cargando && <p className="text-subtle small mt-3 mb-0">Cargando horarios…</p>}
+        </div>
+
+        <div className="card-custom mt-4">
+          <h3 className="h5 font-serif mb-3">Recomendaciones antes de tu cita</h3>
+          <ul className="mb-0 small">
+            <li>Llega a la hora reservada.</li>
+            <li>No asistas con productos pesados en el cabello.</li>
+            <li>Evita gel, mousse, aceite y sérum antes de la evaluación.</li>
+            <li>
+              Si tu servicio es largo o incluye color/decoloración, usa las notas para contar tu
+              historial químico y el largo actual de tu cabello.
+            </li>
+          </ul>
         </div>
       </aside>
     </div>

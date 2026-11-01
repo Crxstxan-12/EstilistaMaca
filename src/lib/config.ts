@@ -1,15 +1,19 @@
 /** Configuración de marca y límites (leída desde variables de entorno con fallback). */
 export const BRAND = {
-  nombre: process.env.NEXT_PUBLIC_NOMBRE_SALON ?? 'Macarena Escobar',
-  subtitulo: process.env.NEXT_PUBLIC_SUBTITULO_SALON ?? 'Estilista Profesional',
+  nombre: process.env.NEXT_PUBLIC_NOMBRE_SALON ?? 'Macarena Estilista',
+  subtitulo: process.env.NEXT_PUBLIC_SUBTITULO_SALON ?? 'Salón House',
   instagram: process.env.NEXT_PUBLIC_INSTAGRAM_SALON ?? '@_macarena.estilista_',
   instagramUrl: 'https://instagram.com/_macarena.estilista_',
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP ?? '56900000000',
-  emailContacto: 'hola@macarenaestilista.cl',
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP ?? '56978033409',
+  emailContacto: 'Macarena.escobar92@gmail.com',
   emailRemitente:
     process.env.EMAIL_FROM ?? 'Macarena Estilista <no-reply@macarenaestilista.cl>',
-  direccion: 'Calle Ejemplo 123, Providencia · Santiago',
-  telefonoVisible: '+56 9 0000 0000',
+  direccion: 'El Nevado #1142, Chillán, Ñuble, Chile',
+  ciudad: 'Chillán, Ñuble, Chile',
+  telefonoVisible: '+56 9 7803 3409',
+  telefonoLlamadas: '+56978033409',
+  mapsUrl:
+    'https://www.google.com/maps/search/?api=1&query=El+Nevado+1142,+Chillan,+Chile',
 } as const;
 
 export const SITE_URL =
