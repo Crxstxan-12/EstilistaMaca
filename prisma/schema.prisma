@@ -1,0 +1,341 @@
+// ============================================
+// Macarena Estilista — Esquema de base de datos
+// PostgreSQL + Prisma
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------------------------
+// ENUMS
+// --------------------------------------------
+
+enum Rol {
+  CLIENTE
+  ADMINISTRADOR
+}
+
+enum TipoDescuento {
+  PORCENTAJE
+  MONTO
+  DOS_POR_UNO
+}
+
+enum EstadoReserva {
+  PENDIENTE
+  CONFIRMADA
+  REALIZADA
+  CANCELADA
+  NO_ASISTIO
+  REAGENDADA
+}
+
+enum MotivoBloqueo {
+  VACACIONES
+  CAPACITACION
+  PERSONAL
+  INVENTARIO
+  MANTENCION
+  OTRO
+}
+
+enum TipoNotificacion {
+  RESERVA_CREADA
+  RESERVA_CONFIRMADA
+  RESERVA_CANCELADA
+  RESERVA_RECORDATORIO
+  PROMOCION
+  GENERAL
+}
+
+enum MetodoPago {
+  EFECTIVO
+  TRANSFERENCIA
+  TARJETA
+  WEBPAY
+  OTRO
+}
+
+// --------------------------------------------
+// USUARIOS Y CLIENTES
+// --------------------------------------------
+
+model Usuario {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String
+  firstName       String    @default("")
+  lastName        String    @default("")
+  rol             Rol       @default(CLIENTE)
+  telefono        String    @default("")
+  fechaNacimiento DateTime? @db.Date
+  fotoPerfil      String?
+  isActive        Boolean   @default(true)
+  isStaff         Boolean   @default(false)
+  isSuperuser     Boolean   @default(false)
+  lastLogin       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  cliente             Cliente?
+  reservasCreadas     Reserva[]             @relation("ReservaCreadaPor")
+  notificaciones      Notificacion[]
+  tokensRecuperacion  PasswordResetToken[]
+
+  @@index([rol])
+  @@map("usuarios")
+}
+
+model Cliente {
+  id              String    @id @default(cuid())
+  usuarioId       String?   @unique
+  nombre          String
+  apellido        String    @default("")
+  email           String    @unique
+  telefono        String    @default("")
+  fechaNacimiento DateTime? @db.Date
+  notas           String    @default("")
+  esVip           Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  usuario        Usuario?        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  reservas       Reserva[]
+  notificaciones Notificacion[]
+
+  @@map("clientes")
+}
+
+// --------------------------------------------
+// CATÁLOGO
+// --------------------------------------------
+
+model Categoria {
+  id          String   @id @default(cuid())
+  nombre      String   @unique
+  slug        String   @unique
+  descripcion String   @default("")
+  orden       Int      @default(0)
+  activo      Boolean  @default(true)
+  icono       String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  servicios Servicio[]
+  galeria   GaleriaTrabajo[]
+
+  @@index([orden])
+  @@index([activo])
+  @@map("categorias")
+}
+
+model Servicio {
+  id               String   @id @default(cuid())
+  categoriaId      String
+  nombre           String
+  slug             String   @unique
+  descripcion      String   @default("")
+  descripcionCorta String   @default("")
+  precio           Int
+  duracion         Int      @default(60)
+  precioDesde      Boolean  @default(false)
+  activo           Boolean  @default(true)
+  destacado        Boolean  @default(false)
+  orden            Int      @default(0)
+  imagen           String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  categoria  Categoria   @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  reservas   Reserva[]
+  promociones Promocion[] @relation("PromocionServicios")
+
+  @@index([activo])
+  @@index([destacado])
+  @@index([orden])
+  @@map("servicios")
+}
+
+// --------------------------------------------
+// PROMOCIONES
+// --------------------------------------------
+
+model Promocion {
+  id              String         @id @default(cuid())
+  nombre          String
+  slug            String         @unique
+  descripcion     String         @default("")
+  codigo          String?        @unique
+  tipoDescuento   TipoDescuento  @default(PORCENTAJE)
+  valorDescuento  Int            @default(0)
+  validoDesde     DateTime       @default(now())
+  validoHasta     DateTime?
+  stockUsos       Int?
+  usosActuales    Int            @default(0)
+  activo          Boolean        @default(true)
+  imagen          String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  serviciosAplicables Servicio[] @relation("PromocionServicios")
+  reservas            Reserva[]
+
+  @@index([activo])
+  @@map("promociones")
+}
+
+// --------------------------------------------
+// AGENDA
+// --------------------------------------------
+
+model HorarioSemanal {
+  id              String   @id @default(cuid())
+  dia             Int      @unique // 0 = Lunes ... 6 = Domingo
+  abierto         Boolean  @default(true)
+  horaApertura    String?  @default("10:00") // formato "HH:MM"
+  horaCierre      String?  @default("20:00")
+  horarioEspecial Boolean  @default(false)
+  nota            String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("horarios_semanales")
+}
+
+model BloqueoHorario {
+  id               String        @id @default(cuid())
+  titulo           String
+  fechaInicio      DateTime
+  fechaFin         DateTime
+  motivo           MotivoBloqueo @default(OTRO)
+  nota             String        @default("")
+  mostrarAClientes Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([fechaInicio])
+  @@index([fechaFin])
+  @@map("bloqueos_horarios")
+}
+
+// --------------------------------------------
+// RESERVAS
+// --------------------------------------------
+
+model Reserva {
+  id                 String        @id @default(cuid())
+  clienteId          String
+  servicioId         String
+  promocionId        String?
+  usuarioCreadorId   String?
+  fechaHora          DateTime
+  duracion           Int           @default(60)
+  precioFinal        Int           @default(0)
+  estado             EstadoReserva @default(PENDIENTE)
+  notasCliente       String        @default("")
+  notasInternas      String        @default("")
+  pagoRealizado      Boolean       @default(false)
+  metodoPago         MetodoPago?
+  fechaConfirmacion  DateTime?
+  fechaCancelacion   DateTime?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  cliente        Cliente    @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  servicio       Servicio   @relation(fields: [servicioId], references: [id], onDelete: Restrict)
+  promocion      Promocion? @relation(fields: [promocionId], references: [id], onDelete: SetNull)
+  usuarioCreador Usuario?   @relation("ReservaCreadaPor", fields: [usuarioCreadorId], references: [id], onDelete: SetNull)
+
+  @@index([clienteId, fechaHora])
+  @@index([estado, fechaHora])
+  @@index([servicioId, fechaHora])
+  @@index([fechaHora])
+  @@map("reservas")
+}
+
+// --------------------------------------------
+// GALERÍA
+// --------------------------------------------
+
+model GaleriaTrabajo {
+  id              String   @id @default(cuid())
+  titulo          String
+  descripcion     String   @default("")
+  imagen          String?
+  categoriaId     String?
+  tags            String   @default("")
+  clienteAnonimo  Boolean  @default(true)
+  destacado       Boolean  @default(false)
+  activo          Boolean  @default(true)
+  orden           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  categoria Categoria? @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+
+  @@index([destacado])
+  @@index([activo])
+  @@map("galeria_trabajos")
+}
+
+// --------------------------------------------
+// NOTIFICACIONES
+// --------------------------------------------
+
+model Notificacion {
+  id              String            @id @default(cuid())
+  usuarioId       String?
+  clienteId       String?
+  tipo            TipoNotificacion  @default(GENERAL)
+  titulo          String
+  mensaje         String
+  enlace          String            @default("")
+  leida           Boolean           @default(false)
+  enviadaEmail    Boolean           @default(false)
+  enviadaWhatsapp Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  leidaAt         DateTime?
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  cliente Cliente? @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  @@index([tipo])
+  @@index([leida])
+  @@index([createdAt])
+  @@map("notificaciones")
+}
+
+// --------------------------------------------
+// SEGURIDAD (rate limit + recuperación)
+// --------------------------------------------
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  clave     String   @unique // "login:<ip>" | "api-horas:<ip>"
+  intentos  Int      @default(0)
+  expiraEn  DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiraEn])
+  @@map("login_attempts")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  usuarioId String
+  tokenHash String    @unique
+  expiraEn  DateTime
+  usadoEn   DateTime?
+  createdAt DateTime  @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([expiraEn])
+  @@map("password_reset_tokens")
+}
