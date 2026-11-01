@@ -20,7 +20,7 @@ function mezclar<T>(elementos: T[]): T[] {
   return copia;
 }
 
-export default async function ServiciosPage() {
+async function obtenerDatosServicios() {
   const categorias = await prisma.categoria.findMany({
     where: { activo: true },
     include: {
@@ -35,6 +35,24 @@ export default async function ServiciosPage() {
   const promociones = mezclar(
     await prisma.promocion.findMany({ where: { activo: true } }),
   ).slice(0, 3);
+
+  return { categorias, promociones };
+}
+
+export default async function ServiciosPage() {
+  let datos: Awaited<ReturnType<typeof obtenerDatosServicios>> = {
+    categorias: [],
+    promociones: [],
+  };
+
+  try {
+    datos = await obtenerDatosServicios();
+  } catch (error) {
+    console.error('No se pudieron cargar los datos de servicios.', error);
+  }
+
+  const { categorias, promociones } = datos;
+  const catalogoDisponible = categorias.some((categoria) => categoria.servicios.length > 0);
 
   return (
     <>
@@ -65,6 +83,15 @@ export default async function ServiciosPage() {
                 .
               </p>
             </div>
+            {!catalogoDisponible && (
+              <div className="card-custom mt-4 text-start mx-auto" style={{ maxWidth: 860 }}>
+                <p className="mb-0">
+                  <strong>Estamos actualizando el catálogo en línea.</strong> Si no ves servicios
+                  disponibles por el momento, puedes escribirnos por WhatsApp y te ayudamos a
+                  agendar manualmente.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -101,7 +128,7 @@ export default async function ServiciosPage() {
 
       <section className="py-5">
         <div className="container-custom">
-          {categorias.length > 0 ? (
+          {catalogoDisponible ? (
             categorias
               .filter((cat) => cat.servicios.length > 0)
               .map((cat) => (
