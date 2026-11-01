@@ -26,11 +26,21 @@ function listaTags(tags: string): string[] {
     : [];
 }
 
-export default async function GaleriaPage() {
-  const trabajos = await prisma.galeriaTrabajo.findMany({
+async function obtenerTrabajosGaleria() {
+  return prisma.galeriaTrabajo.findMany({
     where: { activo: true },
     include: { categoria: true },
   });
+}
+
+export default async function GaleriaPage() {
+  let trabajos: Awaited<ReturnType<typeof obtenerTrabajosGaleria>> = [];
+
+  try {
+    trabajos = await obtenerTrabajosGaleria();
+  } catch (error) {
+    console.error('No se pudieron cargar los trabajos de galería.', error);
+  }
 
   return (
     <>
@@ -42,6 +52,15 @@ export default async function GaleriaPage() {
               Trabajos <span className="text-gradient-gold">recientes</span>
             </h1>
             <p className="text-subtle">Cortes, color, balayage, manicure y más. Inspírate.</p>
+            {trabajos.length === 0 && (
+              <div className="card-custom mt-4 text-start mx-auto" style={{ maxWidth: 860 }}>
+                <p className="mb-0">
+                  <strong>Estamos actualizando la galería en línea.</strong> Mientras terminamos la
+                  sincronización, puedes revisar imágenes referenciales o escribirnos para ver más
+                  trabajos recientes.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
