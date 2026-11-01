@@ -23,7 +23,7 @@ function mezclar<T>(elementos: T[]): T[] {
   return copia;
 }
 
-export default async function HomePage() {
+async function obtenerDatosHome() {
   const categorias = await prisma.categoria.findMany({
     where: { activo: true },
     include: {
@@ -61,12 +61,45 @@ export default async function HomePage() {
   });
 
   const horarios = await prisma.horarioSemanal.findMany({ orderBy: { dia: 'asc' } });
+
+  return { categorias, destacados, promociones, galeria, horarios };
+}
+
+export default async function HomePage() {
+  let datos: Awaited<ReturnType<typeof obtenerDatosHome>> = {
+    categorias: [],
+    destacados: [],
+    promociones: [],
+    galeria: [],
+    horarios: [],
+  };
+
+  try {
+    datos = await obtenerDatosHome();
+  } catch (error) {
+    console.error('No se pudieron cargar los datos de la home.', error);
+  }
+
+  const { categorias, destacados, promociones, galeria, horarios } = datos;
   const categoriasConServicios = categorias.filter((cat) => cat.servicios.length > 0);
+  const usandoRespaldo =
+    categorias.length === 0 &&
+    destacados.length === 0 &&
+    promociones.length === 0 &&
+    galeria.length === 0 &&
+    horarios.length === 0;
 
   return (
     <>
       <section className="hero-section">
         <div className="container-custom">
+          {usandoRespaldo && (
+            <div className="card-custom mb-4">
+              <strong>Estamos actualizando la agenda en linea.</strong>{' '}
+              Mientras terminamos la sincronizacion, puedes revisar la informacion general y
+              contactarnos por WhatsApp.
+            </div>
+          )}
           <div className="row align-items-center gy-5">
             <div className="col-12 col-lg-7 hero-text">
               <div className="hero-eyebrow mb-3">
