@@ -212,9 +212,6 @@ export async function reagendarReserva(reservaId: string, nuevaFechaHora: Date) 
   }
 
   const fin = sumarMinutos(nuevaFechaHora, reserva.duracion);
-  const disponible = await franjaDisponible(nuevaFechaHora, fin, reserva.id);
-  if (!disponible) throw new ReglaNegocioError('El nuevo horario no está disponible.');
-
   return prisma.$transaction(async (tx) => {
     await bloquearAgendaDia(tx, nuevaFechaHora);
     const disponibleEnTx = await franjaDisponibleConCliente(

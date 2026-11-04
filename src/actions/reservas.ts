@@ -133,6 +133,12 @@ export async function reagendarReservaAction(
   try {
     await reagendarReserva(reserva.id, nuevaFechaHora);
   } catch (error) {
+    console.error('reagendarReservaAction fallo', {
+      reservaId,
+      fecha,
+      hora,
+      error,
+    });
     const mensaje =
       error instanceof ReglaNegocioError ? error.message : 'No se pudo reagendar la reserva.';
     return { ok: false, mensaje, errores: { hora: mensaje } };
