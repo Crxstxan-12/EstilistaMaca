@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { esAdmin, requerirAdmin, requerirCliente, requerirUsuario } from '@/lib/auth';
-import { horasDisponiblesTexto } from '@/lib/agenda';
+import { estadoHorariosDia, horasDisponiblesTexto } from '@/lib/agenda';
 import { parseFechaHoraLocal } from '@/lib/datetime';
 import { texto, type ActionState } from '@/lib/form';
 import { prisma } from '@/lib/prisma';
@@ -98,6 +98,8 @@ export async function cancelarReservaAction(formData: FormData): Promise<void> {
   }
 
   revalidatePath('/reservas/mi-cuenta');
+  revalidatePath('/admin/reservas');
+  revalidatePath('/reservas/admin/agenda');
   revalidatePath(`/reservas/${reservaId}`);
   redirect(`/reservas/${reservaId}?msg=reserva-cancelada`);
 }
@@ -138,6 +140,7 @@ export async function reagendarReservaAction(
 
   revalidatePath('/reservas/mi-cuenta');
   revalidatePath(`/reservas/${reservaId}`);
+  revalidatePath(`/reservas/${reservaId}/reagendar`);
   redirect(`/reservas/${reservaId}?msg=datos-actualizados`);
 }
 
@@ -150,6 +153,10 @@ export async function cambiarEstadoReservaAction(formData: FormData): Promise<vo
 
   await prisma.reserva.update({ where: { id: reservaId }, data: { estado } });
   revalidatePath(volverA);
+  revalidatePath('/admin/reservas');
+  revalidatePath('/reservas/admin/agenda');
+  revalidatePath('/reservas/mi-cuenta');
+  revalidatePath(`/reservas/${reservaId}`);
   redirect(`${volverA}?msg=datos-actualizados`);
 }
 
@@ -179,4 +186,17 @@ export async function consultarHorasAction(
   });
   if (!servicio || !fecha) return [];
   return horasDisponiblesTexto(fecha, servicio.duracion);
+}
+
+export async function consultarEstadoHorasAction(
+  servicioSlug: string,
+  fecha: string,
+  reservaId?: string,
+): Promise<{ hora: string; disponible: boolean }[]> {
+  const servicio = await prisma.servicio.findFirst({
+    where: { slug: servicioSlug, activo: true },
+    select: { duracion: true },
+  });
+  if (!servicio || !fecha) return [];
+  return estadoHorariosDia(fecha, servicio.duracion, undefined, reservaId);
 }

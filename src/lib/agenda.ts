@@ -1,5 +1,6 @@
 import 'server-only';
 
+import type { Prisma } from '@prisma/client';
 import { prisma } from './prisma';
 import {
   horaAMinutos,
@@ -23,20 +24,27 @@ type Contexto = {
   reservas: { id: string; fechaHora: Date; duracion: number }[];
 };
 
+export type EstadoHorario = {
+  hora: string;
+  disponible: boolean;
+};
+
+type DbClient = typeof prisma | Prisma.TransactionClient;
+
 export function obtenerHorarioDia(dia: number) {
   return prisma.horarioSemanal.findUnique({ where: { dia } });
 }
 
 /** Carga horario, bloqueos y reservas del día para evaluar disponibilidad con una sola tanda de queries. */
-async function cargarContexto(fechaISO: string): Promise<Contexto> {
+async function cargarContexto(fechaISO: string, db: DbClient = prisma): Promise<Contexto> {
   const [year, month, day] = fechaISO.split('-').map(Number);
   const inicioDia = fechaLocalAUtc(year, month, day, 0, 0);
   const finDia = fechaLocalAUtc(year, month, day, 23, 59);
 
-  const horario = await obtenerHorarioDia(diaSemanaLocal(inicioDia));
+  const horario = await db.horarioSemanal.findUnique({ where: { dia: diaSemanaLocal(inicioDia) } });
 
   const [bloqueos, reservas] = await Promise.all([
-    prisma.bloqueoHorario.findMany({
+    db.bloqueoHorario.findMany({
       where: {
         mostrarAClientes: true,
         fechaInicio: { lt: finDia },
@@ -44,7 +52,7 @@ async function cargarContexto(fechaISO: string): Promise<Contexto> {
       },
       select: { fechaInicio: true, fechaFin: true },
     }),
-    prisma.reserva.findMany({
+    db.reserva.findMany({
       where: {
         estado: { in: ESTADOS_ACTIVOS },
         // Reservas de la madrugada del día siguiente también pueden solaparse con el cierre.
@@ -110,6 +118,17 @@ export async function franjaDisponible(
   return franjaValida(ctx, inicio, fin, excluirReservaId);
 }
 
+export async function franjaDisponibleConCliente(
+  db: DbClient,
+  inicio: Date,
+  fin: Date,
+  excluirReservaId?: string,
+): Promise<boolean> {
+  const fechaISO = fechaLocalISO(inicio);
+  const ctx = await cargarContexto(fechaISO, db);
+  return franjaValida(ctx, inicio, fin, excluirReservaId);
+}
+
 function fechaLocalISO(fecha: Date): string {
   const p = partesEnZona(fecha);
   return `${p.year}-${String(p.month).padStart(2, '0')}-${String(p.day).padStart(2, '0')}`;
@@ -142,13 +161,51 @@ export async function horasDisponibles(
   return resultado;
 }
 
+export async function estadoHorariosDia(
+  fechaISO: string,
+  duracionMin = 60,
+  pasoMin = RESERVA_PASO_MINUTOS,
+  excluirReservaId?: string,
+): Promise<EstadoHorario[]> {
+  const ctx = await cargarContexto(fechaISO);
+  if (!ctx.abierto) return [];
+
+  const [year, month, day] = fechaISO.split('-').map(Number);
+  const inicioDia = fechaLocalAUtc(
+    year,
+    month,
+    day,
+    Math.floor(ctx.aperturaMin / 60),
+    ctx.aperturaMin % 60,
+  );
+  const cierreDia = fechaLocalAUtc(
+    year,
+    month,
+    day,
+    Math.floor(ctx.cierreMin / 60),
+    ctx.cierreMin % 60,
+  );
+
+  const resultado: EstadoHorario[] = [];
+  let actual = inicioDia;
+  while (sumarMinutos(actual, duracionMin) <= cierreDia) {
+    const fin = sumarMinutos(actual, duracionMin);
+    resultado.push({
+      hora: horaEnZona(actual),
+      disponible: franjaValida(ctx, actual, fin, excluirReservaId),
+    });
+    actual = sumarMinutos(actual, pasoMin);
+  }
+  return resultado;
+}
+
 /** Horas disponibles en formato "HH:MM" (hora local del salón). */
 export async function horasDisponiblesTexto(
   fechaISO: string,
   duracionMin = 60,
 ): Promise<string[]> {
-  const horas = await horasDisponibles(fechaISO, duracionMin);
-  return horas.map((h) => horaEnZona(h));
+  const horas = await estadoHorariosDia(fechaISO, duracionMin);
+  return horas.filter((hora) => hora.disponible).map((hora) => hora.hora);
 }
 
 export { DURACION_MAXIMA_MIN };

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import SelectorFechaHora from './SelectorFechaHora';
-import { horasDisponiblesTexto } from '@/lib/agenda';
+import { estadoHorariosDia } from '@/lib/agenda';
 import { requerirCliente } from '@/lib/auth';
 import { precioServicio } from '@/lib/format';
 import { prisma } from '@/lib/prisma';
@@ -26,7 +26,7 @@ export default async function SeleccionarFechaHoraPage({ params, searchParams }:
   const { fecha } = await searchParams;
   const fechaISO =
     typeof fecha === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : '';
-  const horas = fechaISO ? await horasDisponiblesTexto(fechaISO, servicio.duracion) : [];
+  const horas = fechaISO ? await estadoHorariosDia(fechaISO, servicio.duracion) : [];
 
   return (
     <section className="py-5">

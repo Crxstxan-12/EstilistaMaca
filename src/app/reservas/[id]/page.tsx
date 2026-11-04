@@ -76,7 +76,7 @@ export default async function DetalleReservaPage({ params }: { params: Promise<{
                       </form>
                     )}
                     {puedeMod && (
-                      <Link className="btn btn-outline-light" href="#">
+                      <Link className="btn btn-outline-light" href={`/reservas/${reserva.id}/reagendar`}>
                         Reagendar
                       </Link>
                     )}

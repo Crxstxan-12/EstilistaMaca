@@ -2,7 +2,7 @@
 
 import { useActionState, useState, useTransition } from 'react';
 
-import { consultarHorasAction, crearReservaAction } from '@/actions/reservas';
+import { consultarEstadoHorasAction, crearReservaAction } from '@/actions/reservas';
 import { fechaLocalAUtc, hoyISO } from '@/lib/datetime';
 import { ESTADO_INICIAL } from '@/lib/form';
 import { formatFechaLarga } from '@/lib/format';
@@ -13,7 +13,7 @@ type Props = {
   duracion: number;
   precioFormateado: string;
   fechaInicial: string;
-  horasIniciales: string[];
+  horasIniciales: { hora: string; disponible: boolean }[];
 };
 
 /** "YYYY-MM-DD" -> "Lunes 12 de mayo de 2026" (sin desfases de zona horaria). */
@@ -33,9 +33,10 @@ export default function SelectorFechaHora({
 }: Props) {
   const [estado, accion, pendiente] = useActionState(crearReservaAction, ESTADO_INICIAL);
   const [fecha, setFecha] = useState(fechaInicial);
-  const [horas, setHoras] = useState<string[]>(horasIniciales);
+  const [horas, setHoras] = useState<{ hora: string; disponible: boolean }[]>(horasIniciales);
   const [hora, setHora] = useState('');
   const [cargando, iniciarTransicion] = useTransition();
+  const horasDisponibles = horas.filter((item) => item.disponible);
 
   function cambiarFecha(nuevaFecha: string) {
     setFecha(nuevaFecha);
@@ -45,7 +46,7 @@ export default function SelectorFechaHora({
       return;
     }
     iniciarTransicion(async () => {
-      setHoras(await consultarHorasAction(servicioSlug, nuevaFecha));
+      setHoras(await consultarEstadoHorasAction(servicioSlug, nuevaFecha));
     });
   }
 
@@ -135,21 +136,35 @@ export default function SelectorFechaHora({
           {fecha && horas.length > 0 ? (
             <>
               <p className="text-subtle mb-3">
-                {fechaLegible(fecha)} · {horas.length} horario{horas.length === 1 ? '' : 's'}
+                {fechaLegible(fecha)} · {horasDisponibles.length} horario
+                {horasDisponibles.length === 1 ? '' : 's'} libre
+                {horasDisponibles.length === 1 ? '' : 's'}
               </p>
               <div className="grid-hours">
-                {horas.map((h) => (
+                {horas.map((item) => (
                   <button
                     type="button"
-                    key={h}
-                    className={`hour-btn${hora === h ? ' selected' : ''}`}
-                    data-value={h}
-                    onClick={() => setHora(h)}
+                    key={item.hora}
+                    className={`hour-btn${hora === item.hora ? ' selected' : ''}${
+                      item.disponible ? '' : ' is-unavailable'
+                    }`}
+                    data-value={item.hora}
+                    onClick={() => item.disponible && setHora(item.hora)}
+                    disabled={!item.disponible}
+                    aria-disabled={!item.disponible}
                   >
-                    {h}
+                    {item.disponible ? item.hora : `${item.hora} X`}
                   </button>
                 ))}
               </div>
+              {horasDisponibles.length === 0 && (
+                <div
+                  className="alert alert-secondary bg-dark text-light border-warning-subtle mt-3 mb-0"
+                  role="alert"
+                >
+                  ⚠️ Todas las horas de esta fecha ya fueron tomadas. Prueba con otro día.
+                </div>
+              )}
             </>
           ) : fecha && horas.length === 0 ? (
             <div

@@ -88,7 +88,7 @@ export default async function MisReservasPage() {
                       Ver detalle
                     </Link>
                     {puedeModificar(r) && (
-                      <Link href={`/reservas/${r.id}`} className="btn btn-outline-light">
+                      <Link href={`/reservas/${r.id}/reagendar`} className="btn btn-outline-light">
                         Reagendar
                       </Link>
                     )}

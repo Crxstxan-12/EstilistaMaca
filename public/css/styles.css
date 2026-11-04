@@ -1444,6 +1444,23 @@ a.list-group-item.list-group-custom:hover {
     border-color: transparent;
     box-shadow: var(--shadow-gold);
 }
+.hour-btn.is-unavailable,
+.hour-btn:disabled {
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(245, 245, 240, 0.45);
+    border-color: rgba(255, 255, 255, 0.08);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    text-decoration: line-through;
+}
+.hour-btn.is-unavailable:hover,
+.hour-btn:disabled:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(245, 245, 240, 0.45);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: none;
+}
 
 /* ===== Misc ===== */
 .text-subtle { color: var(--color-gray-light) !important; }

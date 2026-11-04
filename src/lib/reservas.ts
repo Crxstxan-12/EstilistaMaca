@@ -1,12 +1,17 @@
 import 'server-only';
 
 import { prisma } from './prisma';
-import { franjaDisponible } from './agenda';
+import { franjaDisponible, franjaDisponibleConCliente } from './agenda';
 import { notificarCambioReserva } from './notificaciones';
-import { sumarMinutos } from './datetime';
+import { fechaISOEnZona, sumarMinutos } from './datetime';
 import type { EstadoReserva, Prisma, Promocion } from '@prisma/client';
 
 export class ReglaNegocioError extends Error {}
+
+async function bloquearAgendaDia(tx: Prisma.TransactionClient, fechaHora: Date) {
+  const [year, month, day] = fechaISOEnZona(fechaHora).split('-').map(Number);
+  await tx.$queryRaw`SELECT pg_advisory_xact_lock(${year}, ${month * 100 + day})`;
+}
 
 type UsuarioRef = {
   id: string;
@@ -127,6 +132,16 @@ export async function crearReserva(input: CrearReservaInput) {
   );
 
   const reserva = await prisma.$transaction(async (tx) => {
+    await bloquearAgendaDia(tx, input.fechaHora);
+    if (!input.omitirValidacionHorario) {
+      const disponible = await franjaDisponibleConCliente(tx, input.fechaHora, fin);
+      if (!disponible) {
+        throw new ReglaNegocioError(
+          'El horario seleccionado ya no está disponible. Por favor, escoge otro.',
+        );
+      }
+    }
+
     const creada = await tx.reserva.create({
       data: {
         clienteId: input.clienteId,
@@ -200,9 +215,20 @@ export async function reagendarReserva(reservaId: string, nuevaFechaHora: Date) 
   const disponible = await franjaDisponible(nuevaFechaHora, fin, reserva.id);
   if (!disponible) throw new ReglaNegocioError('El nuevo horario no está disponible.');
 
-  return prisma.reserva.update({
-    where: { id: reservaId },
-    data: { fechaHora: nuevaFechaHora, estado: 'REAGENDADA' },
+  return prisma.$transaction(async (tx) => {
+    await bloquearAgendaDia(tx, nuevaFechaHora);
+    const disponibleEnTx = await franjaDisponibleConCliente(
+      tx,
+      nuevaFechaHora,
+      fin,
+      reserva.id,
+    );
+    if (!disponibleEnTx) throw new ReglaNegocioError('El nuevo horario no está disponible.');
+
+    return tx.reserva.update({
+      where: { id: reservaId },
+      data: { fechaHora: nuevaFechaHora, estado: 'REAGENDADA' },
+    });
   });
 }
 
