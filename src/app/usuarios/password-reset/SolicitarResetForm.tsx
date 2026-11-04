@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState, type ChangeEvent } from 'react';
 
 import { solicitarResetAction } from '@/actions/auth';
 import { ESTADO_INICIAL } from '@/lib/form';
 
 export default function SolicitarResetForm() {
   const [estado, accion, pendiente] = useActionState(solicitarResetAction, ESTADO_INICIAL);
+  const [email, setEmail] = useState('');
+
+  const cambiarEmail = (evento: ChangeEvent<HTMLInputElement>) => setEmail(evento.target.value);
 
   return (
     <form action={accion} noValidate>
@@ -29,6 +32,8 @@ export default function SolicitarResetForm() {
           maxLength={254}
           className="form-control shadow-none"
           placeholder="tu@email.com"
+          value={email}
+          onChange={cambiarEmail}
         />
         {estado.errores?.email && <div className="text-danger small mt-1">{estado.errores.email}</div>}
       </div>

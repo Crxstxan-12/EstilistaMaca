@@ -1,12 +1,19 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState, type ChangeEvent } from 'react';
 
 import { loginAction } from '@/actions/auth';
 import { ESTADO_INICIAL } from '@/lib/form';
 
+const VALORES_INICIALES = { email: '', password: '' };
+
 export default function LoginForm({ next }: { next: string }) {
   const [estado, accion, pendiente] = useActionState(loginAction, ESTADO_INICIAL);
+  const [valores, setValores] = useState(VALORES_INICIALES);
+
+  const cambiar =
+    (campo: keyof typeof VALORES_INICIALES) => (evento: ChangeEvent<HTMLInputElement>) =>
+      setValores((previos) => ({ ...previos, [campo]: evento.target.value }));
 
   return (
     <form action={accion} className="mb-3" noValidate>
@@ -29,6 +36,8 @@ export default function LoginForm({ next }: { next: string }) {
           required
           maxLength={254}
           autoFocus
+          value={valores.email}
+          onChange={cambiar('email')}
         />
         {estado.errores?.email && <div className="text-danger small mt-1">{estado.errores.email}</div>}
       </div>
@@ -43,6 +52,8 @@ export default function LoginForm({ next }: { next: string }) {
           name="password"
           className="form-control shadow-none"
           required
+          value={valores.password}
+          onChange={cambiar('password')}
         />
         {estado.errores?.password && (
           <div className="text-danger small mt-1">{estado.errores.password}</div>
